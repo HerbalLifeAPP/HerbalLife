@@ -13,3 +13,4 @@ app.get("/home", (req, res) => {
 
 app.listen(port, () => {
   console.log(`Minimal server listening on port ${port}`);
+});
