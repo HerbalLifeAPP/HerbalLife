@@ -1,10 +1,9 @@
+// lOAD .ENV IN THE DEV BEFORE ANYTHING ELSE
+import 'dotenv/config';
 import express from "express";
 import pg from "pg";
 import bodyParser from "body-parser";
 import bcrypt from "bcrypt";
-if (process.env.NODE_ENV !== 'production') {
-  import('dotenv').then((dotenv) => dotenv.config());
-}
 import session from "express-session";
 import passport from "passport";
 import { Strategy } from "passport-local";
