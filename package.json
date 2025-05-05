@@ -1,7 +1,29 @@
 {
-    "Name": "Simple",
-    "main": "app.js",
+    "name": "herbal-life",
+    "version": "1.0.0",
+    "description": "HerbalLife authentication app with Express, PostgreSQL, and Passport",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+      "start": "node index.js",
+      "dev": "nodemon index.js"
+    },
+    "keywords": [],
+    "author": "Your Name",
+    "license": "MIT",
     "dependencies": {
-        "moment": "^2.30.1"
+      "bcrypt": "^5.1.1",
+      "body-parser": "^1.20.2",
+      "dotenv": "^16.4.5",
+      "ejs": "^3.1.9",
+      "express": "^4.19.2",
+      "express-session": "^1.17.3",
+      "passport": "^0.7.0",
+      "passport-local": "^1.0.0",
+      "pg": "^8.11.5"
+    },
+    "devDependencies": {
+      "nodemon": "^3.1.0"
     }
-}
+  }
+  
