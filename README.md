@@ -5,7 +5,9 @@
 [![License](https://img.shields.io/github/license/YourOrg/HerbalTrack)](LICENSE)  
 [![Issues](https://img.shields.io/github/issues/YourOrg/HerbalTrack)](https://github.com/YourOrg/HerbalTrack/issues)
 
-HerbalTrack is a wellness companion inspired by Herbalife’s philosophy. Users can **track their weight**, **log meals**, and **order personalized products** from a coach-curated catalog. Designed for both customers and coaches, it supports sustainable lifestyle changes—one step at a time.
+HerbalTrack is a wellness companion inspired by Herbalife’s philosophy. Users can **track their
+weight**, **log meals**, and **order personalized products** from a coach-curated catalog.
+Designed for both customers and coaches, it supports sustainable lifestyle changes—one step at a time.
 
 ---
 
