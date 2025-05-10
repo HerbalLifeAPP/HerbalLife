@@ -1,5 +1,3 @@
-Here is a fully formatted `README.md` you can copy-and-paste straight into your repo. Just replace any placeholder values (like `YourOrg/HerbalTrack`, email address, etc.) with your real details.
-
 ````markdown
 # 🌿 HerbalTrack: Health & Wellness Tracker
 
