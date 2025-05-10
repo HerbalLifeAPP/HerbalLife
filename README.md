@@ -1,11 +1,10 @@
-```markdown
-# 🌿 HerbalTrack: Health & Wellness Tracker
+# 🌿 HerbalLife: Health & Wellness Tracker
 
-[![Build Status](https://img.shields.io/github/actions/workflow/status/YourOrg/HerbalTrack/build.yml)](https://github.com/YourOrg/HerbalTrack/actions)
-[![License](https://img.shields.io/github/license/YourOrg/HerbalTrack)](LICENSE)
-[![Issues](https://img.shields.io/github/issues/YourOrg/HerbalTrack)](https://github.com/YourOrg/HerbalTrack/issues)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/HerbalLifeAPP/HerbalLife/build.yml)](https://github.com/HerbalLifeAPP/HerbalLife/actions)
+[![License](https://img.shields.io/github/license/HerbalLifeAPP/HerbalLife)](LICENSE)
+[![Issues](https://img.shields.io/github/issues/HerbalLifeAPP/HerbalLife)](https://github.com/HerbalLifeAPP/HerbalLife/issues)
 
-HerbalTrack is a wellness companion inspired by Herbalife's philosophy. Users can **track their weight**, **log meals**, and **order personalized products** from a coach-curated catalog. Designed for both customers and coaches, it supports sustainable lifestyle changes—one step at a time.
+HerbalLife is a wellness companion inspired by Herbalife's philosophy. Users can **track their weight**, **log meals**, and **order personalized products** from a coach-curated catalog. Designed for both customers and coaches, it supports sustainable lifestyle changes—one step at a time.
 
 ---
 
