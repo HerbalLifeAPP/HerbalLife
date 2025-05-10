@@ -1,8 +1,8 @@
 ````markdown
 # 🌿 HerbalTrack: Health & Wellness Tracker
 
-[![Build Status](https://img.shields.io/github/actions/workflow/status/YourOrg/HerbalTrack/build.yml)](https://github.com/YourOrg/HerbalTrack/actions)
-[![License](https://img.shields.io/github/license/YourOrg/HerbalTrack)](LICENSE)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/YourOrg/HerbalTrack/build.yml)](https://github.com/YourOrg/HerbalTrack/actions)  
+[![License](https://img.shields.io/github/license/YourOrg/HerbalTrack)](LICENSE)  
 [![Issues](https://img.shields.io/github/issues/YourOrg/HerbalTrack)](https://github.com/YourOrg/HerbalTrack/issues)
 
 HerbalTrack is a wellness companion inspired by Herbalife’s philosophy. Users can **track their weight**, **log meals**, and **order personalized products** from a coach-curated catalog. Designed for both customers and coaches, it supports sustainable lifestyle changes—one step at a time.
@@ -11,16 +11,16 @@ HerbalTrack is a wellness companion inspired by Herbalife’s philosophy. Users 
 
 ## 📚 Table of Contents
 
-- [Features](#features)  
-- [Tech Stack](#tech-stack)  
-- [Prerequisites](#prerequisites)  
-- [Installation](#installation)  
-- [Usage](#usage)  
-- [Configuration & Environment Variables](#configuration--environment-variables)  
-- [Deployment on Azure](#deployment-on-azure)  
-- [Contributing](#contributing)  
-- [License](#license)  
-- [Acknowledgments & Contact](#acknowledgments--contact)  
+- [✨ Features](#-features)  
+- [🧱 Tech Stack](#-tech-stack)  
+- [📦 Prerequisites](#-prerequisites)  
+- [🛠 Installation](#-installation)  
+- [🚀 Usage](#-usage)  
+- [⚙️ Configuration & Environment Variables](#-configuration--environment-variables)  
+- [☁️ Deployment on Azure](#-deployment-on-azure)  
+- [🤝 Contributing](#-contributing)  
+- [📄 License](#-license)  
+- [🙏 Acknowledgments & Contact](#-acknowledgments--contact)  
 
 ---
 
@@ -37,16 +37,16 @@ HerbalTrack is a wellness companion inspired by Herbalife’s philosophy. Users 
 
 ## 🧱 Tech Stack
 
-| Layer         | Technology                                     |
-| ------------- | ------------------------------------------------|
-| Backend       | Node.js + Express                              |
-| Auth          | Passport.js (Local Strategy)                   |
-| Templating    | EJS                                            |
-| Database      | PostgreSQL (Azure Database for PostgreSQL)     |
-| Security      | bcrypt, express-session                        |
-| Hosting       | Azure Web Apps                                 |
-| Env Management| dotenv                                         |
-| Version Ctrl  | Git + GitHub                                   |
+| Layer          | Technology                                     |
+| -------------- | ----------------------------------------------- |
+| Backend        | Node.js + Express                              |
+| Auth           | Passport.js (Local Strategy)                   |
+| Templating     | EJS                                             |
+| Database       | PostgreSQL (Azure Database for PostgreSQL)      |
+| Security       | bcrypt, express-session                         |
+| Hosting        | Azure Web Apps                                  |
+| Env Management | dotenv                                          |
+| Version Ctrl   | Git + GitHub                                    |
 
 ---
 
