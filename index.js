@@ -34,6 +34,8 @@ app.use(
 // Initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+//Initialize Database
 const db = new pg.Client({
     user: process.env.DB_USER,
     host: process.env.DB_HOST,
@@ -44,6 +46,7 @@ const db = new pg.Client({
       rejectUnauthorized: false
     }
   });
+db.connect();
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
