@@ -6,11 +6,14 @@ import env from "dotenv";
 import session from "express-session";
 import passport from "passport";
 import { Strategy } from "passport-local";
+
+// Initialize env
+env.config();
+
 const app = express();
 const port = process.env.PORT || 3000; // Azure injects PORT via environment variables
 const saltRounds = 12;
-// Initialize env
-env.config();
+
 
 app.set("view engine", "ejs"); //Setting EJS as a view engine
 
