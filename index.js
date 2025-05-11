@@ -54,11 +54,11 @@ app.use(express.static("public"));
 
 // Routes
 app.get("/", (req, res) => {
-    res.render("index.ejs");
+    res.render("index");
   });
   
   app.get("/login", (req, res) => {
-    res.render("login.ejs");
+    res.render("login");
   });
   
   app.get("/signup", (req, res) => {
@@ -69,11 +69,19 @@ app.get("/", (req, res) => {
   
   app.get("/home", (req, res) => {
     if (req.isAuthenticated()) {
-      res.render("home.ejs");
+      res.render("home");
     } else {
       res.redirect("/login");
     }
   });
+
+app.get("/meal-logs", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.render("meal-logs");
+  } else {
+    res.redirect("/login");
+  }
+});
   
   app.post("/signup", async (req, res) => {
     const { person, email, password } = req.body;
