@@ -38,6 +38,7 @@ HerbalLife is a wellness companion inspired by Herbalife's philosophy. Users can
 
 | Layer          | Technology                                |
 |----------------|-------------------------------------------|
+| Frontend       | Vanilla JavaScript                        |
 | Backend        | Node.js + Express                         |
 | Auth           | Passport.js (Local Strategy)              |
 | Templating     | EJS                                       |
@@ -51,7 +52,7 @@ HerbalLife is a wellness companion inspired by Herbalife's philosophy. Users can
 
 ## 📦 Prerequisites
 
-- Node.js ≥ 18
+- Node.js ≥ 20
 - A running PostgreSQL instance (local or Azure)
 
 ---
