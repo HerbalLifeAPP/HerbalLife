@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meal Logs</title>
+  </head>
+  <body>
+    <%-include("partials/header.ejs") %>
+    <div class="container">
+      <h2 class="title">Meal Logs</h2>
+      <div class="content">
+        <div class="data-form">
+          <form action="/signup" method="post">
+            <label for="date">Date</label>
+            <div class="input-btn">
+              <input
+                type="date"
+                id="date"
+                name="date"
+                autocomplete="off"
+                required
+              />
+            </div>
+
+            <label for="time">Time</label>
+            <div class="input-btn">
+              <input
+                type="time"
+                id="time"
+                name="time"
+                autocomplete="off"
+                required
+              />
+            </div>
+
+            <label for="meal-type">Meal Type</label>
+            <div class="input-btn">
+              <input
+                type="text"
+                id="meal-type"
+                name="meal-type"
+                autocomplete="off"
+                required
+              />
+              <button type="button" id="toggle-btn-one" class="icon-btn">
+                <i class="fa-solid fa-angle-down" id="toggleIcon1"></i>
+              </button>
+            </div>
+
+            <input type="submit" class="form-btn" value="Submit" />
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
