@@ -1,0 +1,18 @@
+-- v1.0 – initial schema
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
+  password TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS meal_logs (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  log_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  meal_type TEXT NOT NULL,
+  description TEXT,
+  calories INTEGER,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
