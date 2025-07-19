@@ -1,28 +1,121 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Breakfast Club</title>
-    <link rel="stylesheet" href="/css/styles.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body class="landing-page">
-    <div class="content">
-      <div class="logo">
-        <img src="/images/Logo.png" alt="Breakfast Club Logo" />
-      </div>
-      <a href="/signup" class="button"><button>Join Us</button></a>
+// index.js
+import express from "express";
+import pg from "pg";
+import bodyParser from "body-parser";
+import bcrypt from "bcrypt";
+import env from "dotenv";
+import session from "express-session";
+import passport from "passport";
+import { Strategy } from "passport-local";
+import fs from "fs";
+import path from "path";
 
-      <p>
-        Already have an account?<a href="/login" class="cta-link"> Log In</a>
-      </p>
-    </div>
-    <script src="js/app.js"></script>
-  </body>
-</html>
+// Initialize environment variables
+env.config();
+
+const app = express();
+const port = process.env.PORT || 3000;
+const saltRounds = 12;
+
+// Set view engine and static files
+app.set("view engine", "ejs");
+app.use(express.static("public"));
+
+// Body parser
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Session configuration
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    },
+  })
+);
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// PostgreSQL client setup
+const db = new pg.Client({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+  ssl: { rejectUnauthorized: false },
+});
+
+db.connect();
+
+// Routes
+app.get("/", (req, res) => res.render("index"));
+app.get("/login", (req, res) => res.render("login"));
+app.get("/signup", (req, res) => {
+  const error = req.session.error;
+  req.session.error = null;
+  res.render("signup", { error });
+});
+app.get("/home", (req, res) =>
+  req.isAuthenticated() ? res.render("home") : res.redirect("/login")
+);
+
+// Meal logs page with form
+app.get("/meal-logs", (req, res) =>
+  req.isAuthenticated() ? res.render("meal-logs", { user: req.user }) : res.redirect("/login")
+);
+
+// Handle new meal log submission
+app.post("/meal-logs", async (req, res) => {
+  if (!req.isAuthenticated()) return res.redirect("/login");
+
+  const { date, time, mealType, description, calories } = req.body;
+  try {
+    await db.query(
+      `INSERT INTO meal_logs
+         (user_id, log_date, meal_type, description, calories)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [
+        req.user.id,
+        `${date} ${time}`,
+        mealType,
+        description || null,
+        calories ? Number(calories) : null,
+      ]
+    );
+    res.redirect("/meal-logs");
+  } catch (err) {
+    console.error("Insert Meal Error:", err.message);
+    res.status(500).send("Could not save your meal. Try again.");
+  }
+});
+
+// Signup handler
+app.post("/signup", async (req, res) => {
+  const { person, email, password } = req.body;
+  // ... existing signup logic ...
+});
+
+// Login handler
+app.post("/login", (req, res, next) => {
+  // ... existing login logic ...
+});
+
+// Passport Local Strategy, serialize/deserialize
+// ... existing Passport setup ...
+
+// Initialize schema and start server
+async function initSchema() {
+  const sql = fs.readFileSync(path.join(process.cwd(), "schema.sql"), "utf8");
+  await db.query(sql);
+}
+
+initSchema()
+  .then(() => app.listen(port, () => console.log(`Server on port ${port}`)))
+  .catch(err => console.error("Init Error:", err));
