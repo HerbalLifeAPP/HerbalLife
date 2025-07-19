@@ -1,3 +1,7 @@
+
+/*
+views/meal-logs.ejs
+-------------------
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,46 +10,38 @@
     <title>Meal Logs</title>
   </head>
   <body>
-    <%-include("partials/header.ejs") %>
+    <%- include("partials/header") %>
     <div class="container">
-      <h2 class="title">Meal Logs</h2>
+      <h2 class="title">Meal Logs for <%= user.name %></h2>
       <div class="content">
         <div class="data-form">
-          <form action="/signup" method="post">
+          <form action="/meal-logs" method="post">
             <label for="date">Date</label>
             <div class="input-btn">
-              <input
-                type="date"
-                id="date"
-                name="date"
-                autocomplete="off"
-                required
-              />
+              <input type="date" id="date" name="date" required />
             </div>
 
             <label for="time">Time</label>
             <div class="input-btn">
-              <input
-                type="time"
-                id="time"
-                name="time"
-                autocomplete="off"
-                required
-              />
+              <input type="time" id="time" name="time" required />
             </div>
 
-            <label for="meal-type">Meal Type</label>
+            <label for="mealType">Meal Type</label>
             <div class="input-btn">
-              <input
-                type="text"
-                id="meal-type"
-                name="meal-type"
-                autocomplete="off"
-                required
-              />
+              <input type="text" id="mealType" name="mealType" required />
               <button type="button" id="toggle-btn-one" class="icon-btn">
                 <i class="fa-solid fa-angle-down" id="toggleIcon1"></i>
               </button>
+            </div>
+
+            <label for="description">Description</label>
+            <div class="input-btn">
+              <textarea id="description" name="description"></textarea>
+            </div>
+
+            <label for="calories">Calories</label>
+            <div class="input-btn">
+              <input type="number" id="calories" name="calories" />
             </div>
 
             <input type="submit" class="form-btn" value="Submit" />
@@ -55,3 +51,4 @@
     </div>
   </body>
 </html>
+*/
