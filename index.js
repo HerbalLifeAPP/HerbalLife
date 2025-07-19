@@ -1,3 +1,4 @@
+// index.js
 import express from "express";
 import pg from "pg";
 import bodyParser from "body-parser";
@@ -48,7 +49,14 @@ const db = new pg.Client({
     rejectUnauthorized: false,
   },
 });
-db.connect();
+
+// Connect and debug connection details
+db.connect()
+  .then(() => {
+    return db.query("SELECT current_database() AS db, current_schema() AS schema");
+  })
+  .then(res => console.log("👀 Connected to:", res.rows[0]))
+  .catch(err => console.error("DB Debug Error:", err));
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -199,9 +207,14 @@ passport.deserializeUser(async (id, cb) => {
 // Run schema.sql on startup
 async function initSchema() {
   try {
-    const sql = fs.readFileSync(path.join(process.cwd(), "schema.sql"), "utf8");
-    await db.query(sql);
-    console.log("✅ Schema initialized or already exists");
+    const schemaPath = path.join(process.cwd(), "schema.sql");
+    console.log("🔍 Loading schema at:", schemaPath);
+
+    const sql = fs.readFileSync(schemaPath, "utf8");
+    console.log("🔎 SQL length:", sql.length, "characters");
+
+    const result = await db.query(sql);
+    console.log("✅ Schema initialized:", result.command);
   } catch (err) {
     console.error("❌ Schema initialization failed:", err.message);
     process.exit(1);
@@ -209,8 +222,21 @@ async function initSchema() {
 }
 
 // Start server after schema is initialized
-initSchema().then(() => {
-  app.listen(port, () => {
-    console.log(`Server listening at port ${port}`);
+initSchema()
+  .then(async () => {
+    // List tables after initialization
+    const { rows } = await db.query(
+      `SELECT table_name FROM information_schema.tables WHERE table_schema='public';`
+    );
+    console.log(
+      "📚 Tables in public schema:",
+      rows.map(r => r.table_name)
+    );
+
+    app.listen(port, () => {
+      console.log(`Server listening at port ${port}`);
+    });
+  })
+  .catch(err => {
+    console.error("Initialization Error:", err);
   });
-});
