@@ -1,4 +1,3 @@
-// index.js
 import express from "express";
 import pg from "pg";
 import bodyParser from "body-parser";
@@ -10,35 +9,35 @@ import { Strategy } from "passport-local";
 import fs from "fs";
 import path from "path";
 
-// Initialize environment variables
+// Load .env
 env.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 const saltRounds = 12;
 
-// Set view engine
+// Use EJS and serve static from your capital‑P folder
 app.set("view engine", "ejs");
+app.use(express.static("Public"));    // ← match your existing folder name
 
-// Session configuration
+// Parse form bodies
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Session
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-    },
+    cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 },
   })
 );
 
-// Initialize Passport
+// Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-// PostgreSQL client setup
+// PostgreSQL
 const db = new pg.Client({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -47,122 +46,133 @@ const db = new pg.Client({
   port: process.env.DB_PORT,
   ssl: { rejectUnauthorized: false },
 });
-
-// Connect to the database
 db.connect();
 
-// Middleware
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public"));
+// ——— ROUTES ———
 
-// Routes
-app.get("/", (req, res) => res.render("index"));
-app.get("/login", (req, res) => res.render("login"));
+// Home page
+app.get("/", (req, res) => {
+  res.render("index");
+});
+
+// Signup
 app.get("/signup", (req, res) => {
   const error = req.session.error;
   req.session.error = null;
   res.render("signup", { error });
 });
-app.get("/home", (req, res) =>
-  req.isAuthenticated() ? res.render("home") : res.redirect("/login")
-);
-app.get("/meal-logs", (req, res) =>
-  req.isAuthenticated() ? res.render("meal-logs") : res.redirect("/login")
-);
-
 app.post("/signup", async (req, res) => {
   const { person, email, password } = req.body;
   try {
-    const existingUser = await db.query(
-      "SELECT * FROM users WHERE email = $1",
+    const { rows } = await db.query(
+      "SELECT 1 FROM users WHERE email = $1",
       [email]
     );
-    if (existingUser.rows.length > 0) {
-      return res.status(409).send("Email already in use.");
+    if (rows.length) {
+      req.session.error = "Email already in use.";
+      return res.redirect("/signup");
     }
-    const salt = await bcrypt.genSalt(saltRounds);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hash = await bcrypt.hash(password, saltRounds);
     const result = await db.query(
-      "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *",
-      [person, email, hashedPassword]
+      "INSERT INTO users (name,email,password) VALUES ($1,$2,$3) RETURNING *",
+      [person, email, hash]
     );
-    const user = result.rows[0];
-    req.login(user, err => {
-      if (err) {
-        console.error("Sign Up Error:", err.message);
-        return res.status(500).json({ error: "Authentication failed. Please try again." });
-      }
-      return res.redirect("/home");
+    req.login(result.rows[0], (err) => {
+      if (err) throw err;
+      res.redirect("/home");
     });
   } catch (err) {
-    console.error("Database Error", err.message);
-    return res.status(500).json({ error: "Oops! Something went wrong. Please try again later." });
+    console.error(err);
+    res.status(500).send("Server error");
   }
 });
 
-app.post("/login", (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      console.error("Login Error", err.message);
-      return res.status(500).json({ error: "Oops! Something went wrong. Please try again later." });
-    }
-    if (!user) {
-      req.session.error = "User not found. Please sign up.";
-      return res.redirect("/signup");
-    }
-    req.login(user, err => {
-      if (err) {
-        console.error("Login Session Error:", err.message);
-        return res.status(500).json({ error: "Session error. Try again." });
-      }
-      return res.redirect("/home");
-    });
-  })(req, res, next);
+// Login
+app.get("/login", (req, res) => res.render("login"));
+app.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/home",
+    failureRedirect: "/login",
+  })
+);
+
+// Protected home
+app.get("/home", (req, res) =>
+  req.isAuthenticated() ? res.render("home", { user: req.user }) : res.redirect("/login")
+);
+
+// Meal logs list + form
+app.get("/meal-logs", (req, res) =>
+  req.isAuthenticated()
+    ? res.render("meal-logs", { user: req.user })
+    : res.redirect("/login")
+);
+
+// Handle meal-log POST
+app.post("/meal-logs", async (req, res) => {
+  if (!req.isAuthenticated()) return res.redirect("/login");
+  const { date, time, mealType, description, calories } = req.body;
+  try {
+    await db.query(
+      `INSERT INTO meal_logs
+         (user_id, log_date, meal_type, description, calories)
+       VALUES ($1,$2,$3,$4,$5)`,
+      [
+        req.user.id,
+        `${date} ${time}`,
+        mealType,
+        description || null,
+        calories ? Number(calories) : null,
+      ]
+    );
+    res.redirect("/meal-logs");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Could not save your meal.");
+  }
 });
 
-// Passport Local Strategy
+// Passport local strategy
 passport.use(
   new Strategy(async (username, password, cb) => {
     try {
-      const result = await db.query(
+      const { rows } = await db.query(
         "SELECT * FROM users WHERE email = $1",
         [username]
       );
-      if (result.rows.length === 0) {
-        return cb(null, false, { message: "User does not exist." });
-      }
-      const user = result.rows[0];
-      const isMatch = await bcrypt.compare(password, user.password);
-      return isMatch ? cb(null, user) : cb(null, false, { message: "Incorrect Password." });
+      if (!rows.length) return cb(null, false);
+      const user = rows[0];
+      const ok = await bcrypt.compare(password, user.password);
+      return ok ? cb(null, user) : cb(null, false);
     } catch (err) {
       return cb(err);
     }
   })
 );
 
-passport.serializeUser((user, cb) => cb(null, user.id));
+passport.serializeUser((u, cb) => cb(null, u.id));
 passport.deserializeUser(async (id, cb) => {
   try {
-    const result = await db.query(
-      "SELECT id, name, email FROM users WHERE id = $1",
+    const { rows } = await db.query(
+      "SELECT id,name,email FROM users WHERE id = $1",
       [id]
     );
-    return result.rows.length ? cb(null, result.rows[0]) : cb(null, false);
-  } catch (err) {
-    console.error("Deserialize Error:", err.message);
-    cb(err);
+    cb(null, rows[0] || false);
+  } catch (e) {
+    cb(e);
   }
 });
 
-// Initialize schema and start server
+// Initialize schema then start
 async function initSchema() {
   const sql = fs.readFileSync(path.join(process.cwd(), "schema.sql"), "utf8");
   await db.query(sql);
 }
 
-initSchema().then(() => {
-  app.listen(port, () => console.log(`Server listening on port ${port}`));
-}).catch(err => {
-  console.error("Initialization Error:", err.message);
-  process.exit(1);
-});
+initSchema()
+  .then(() => app.listen(port, () => console.log(`Listening on ${port}`)))
+  .catch((err) => {
+    console.error("Init error:", err);
+    process.exit(1);
+  });
